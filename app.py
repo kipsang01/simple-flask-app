@@ -9,7 +9,7 @@ load_dotenv()
 app = Flask(__name__)
 
 # Get allowed origins from environment variable
-ALLOWED_ORIGINS = os.getenv('ALLOWED_ORIGINS', 'http://localhost:3000,https://9070-2c0f-2a80-10d8-3f10-57c9-3ee5-7887-7150.ngrok-free.app/api/check-cookies').split(',')
+ALLOWED_ORIGINS = os.getenv('ALLOWED_ORIGINS', 'http://localhost:3000').split(',')
 
 # Configure CORS
 # CORS(app,{
@@ -24,36 +24,34 @@ CORS(app, supports_credentials=True, origins=ALLOWED_ORIGINS)
 @app.route("/check-cookies")
 def index():
     print("Received cookies:", request.cookies)
-    if 'ngrok-skip-browser-warning' in request.headers:
-        has_cookie = request.cookies.get('test_cookie') is not None
-        html = """
-        <!DOCTYPE html>
-        <html>
-        <body>
-            <script>
-                // Try to set a test cookie
-                document.cookie = "test_cookie=1; SameSite=None; Secure";
-                
-                // Check if we can read the cookie
-                const cookiesEnabled = document.cookie.indexOf('test_cookie=1') !== -1;
-                
-                // Send result to parent window
-                window.parent.postMessage({ cookiesEnabled }, '*');
-            </script>
-        </body>
-        </html>
-        """
-        
-        response = make_response(html)
-        response.headers['Content-Type'] = 'text/html'
-        
-        # Set CORS headers
-        response.headers['Access-Control-Allow-Origin'] = 'http://localhost:3000'
-        response.headers['Access-Control-Allow-Credentials'] = 'true'
-        return response
-    else:
-        return ""
-
+    has_cookie = request.cookies.get('test_cookie') is not None
+    html = """
+    <!DOCTYPE html>
+    <html>
+    <body>
+    <h1> Check Cookies</h1>
+        <script>
+            // Try to set a test cookie
+            document.cookie = "test_cookie=1; SameSite=None; Secure";
+            
+            // Check if we can read the cookie
+            const cookiesEnabled = document.cookie.indexOf('test_cookie=1') !== -1;
+            
+            // Send result to parent window
+            window.parent.postMessage({ cookiesEnabled }, '*');
+        </script>
+    </body>
+    </html>
+    """
+    
+    response = make_response(html)
+    response.headers['Content-Type'] = 'text/html'
+    
+    # Set CORS headers
+    response.headers['Access-Control-Allow-Origin'] = 'http://localhost:3000'
+    response.headers['Access-Control-Allow-Credentials'] = 'true'
+    return response
+    
 # @app.route('/check-cookies')
 # def check_cookies():
 #     # Log cookies for debugging
