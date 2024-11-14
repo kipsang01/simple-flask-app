@@ -9,17 +9,17 @@ load_dotenv()
 app = Flask(__name__)
 
 # Get allowed origins from environment variable
-ALLOWED_ORIGINS = os.getenv('ALLOWED_ORIGINS', 'http://localhost:3000').split(',')
+ALLOWED_ORIGINS = os.getenv('ALLOWED_ORIGINS', 'http://localhost:3000,https://9070-2c0f-2a80-10d8-3f10-57c9-3ee5-7887-7150.ngrok-free.app/api/check-cookies').split(',')
 
 # Configure CORS
-CORS(app,{
-            "origins": ALLOWED_ORIGINS,
-            "methods": ["GET", "POST", "OPTIONS"],
-            "allow_headers": ["Content-Type", "Authorization"],
-            "supports_credentials": True
-        }
-)
-# CORS(app, supports_credentials=True)
+# CORS(app,{
+#             "origins": ALLOWED_ORIGINS,
+#             "methods": ["GET", "POST", "OPTIONS"],
+#             "allow_headers": ["ngrok-skip-browser-warning","Content-Type", "Authorization"],
+#             "supports_credentials": True
+#         }
+# )
+CORS(app, supports_credentials=True, origins=ALLOWED_ORIGINS)
 
 @app.route("/check-cookies")
 def index():
@@ -88,4 +88,5 @@ def health_check():
     })
 
 if __name__ == '__main__':
+    print(f"Allowed origins: {ALLOWED_ORIGINS}")
     app.run(debug=True)
