@@ -36,8 +36,6 @@ def index():
     
     response = make_response(html)
     response.headers['Content-Type'] = 'text/html'
-    
-    # response.headers['Access-Control-Allow-Credentials'] = 'true'
     return response
 
 
