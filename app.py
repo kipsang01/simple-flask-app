@@ -1,35 +1,25 @@
-from flask import Flask, jsonify, make_response, render_template, request
+from flask import Flask, jsonify, make_response
 from flask_cors import CORS
 import os
 from dotenv import load_dotenv
 
-# Load environment variables
 load_dotenv()
 
 app = Flask(__name__)
 
-# Get allowed origins from environment variable
-ALLOWED_ORIGINS = os.getenv('ALLOWED_ORIGINS', 'http://localhost:3000').split(',')
+ALLOWED_ORIGINS = os.getenv('ALLOWED_ORIGINS', 
+                            'http://localhost:3000,https://staging.olitt.com,https://beta.olitt.com,https://app.olitt.com,https://olitt.com'
+                            ).split(',')
 
-# Configure CORS
-# CORS(app,{
-#             "origins": ALLOWED_ORIGINS,
-#             "methods": ["GET", "POST", "OPTIONS"],
-#             "allow_headers": ["ngrok-skip-browser-warning","Content-Type", "Authorization"],
-#             "supports_credentials": True
-#         }
-# )
 CORS(app, supports_credentials=True, origins=ALLOWED_ORIGINS)
 
 @app.route("/check-cookies")
 def index():
-    print("Received cookies:", request.cookies)
-    has_cookie = request.cookies.get('test_cookie') is not None
     html = """
     <!DOCTYPE html>
     <html>
     <body>
-    <h1> Check Cookies</h1>
+        <h1>Check Third Party Cookies</h1>
         <script>
             // Try to set a test cookie
             document.cookie = "test_cookie=1; SameSite=None; Secure";
@@ -48,34 +38,10 @@ def index():
     response.headers['Content-Type'] = 'text/html'
     
     # Set CORS headers
-    response.headers['Access-Control-Allow-Origin'] = 'http://localhost:3000'
+    # response.headers['Access-Control-Allow-Origin'] = 'http://localhost:3000'
     response.headers['Access-Control-Allow-Credentials'] = 'true'
     return response
-    
-# @app.route('/check-cookies')
-# def check_cookies():
-#     # Log cookies for debugging
-#     print("Received cookies:", request.cookies)
-    
-#     # Check if the test cookie exists
-#     has_cookie = request.cookies.get('testcookie') == '1'
-#     print(has_cookie)
-    
-#     # Create response
-#     response = jsonify({
-#         'cookiesEnabled': has_cookie,
-#         'receivedCookies': dict(request.cookies)  # For debugging
-#     })
-    
-#     # Set CORS headers
-#     origin = request.headers.get('Origin')
-#     print("origin", origin)
-#     if origin in ALLOWED_ORIGINS:
-#         response.headers['Access-Control-Allow-Origin'] = origin
-#         response.headers['Access-Control-Allow-Credentials'] = 'true'
-#     print(response)
-    
-#     return response
+
 
 @app.route('/health')
 def health_check():
@@ -86,5 +52,4 @@ def health_check():
     })
 
 if __name__ == '__main__':
-    print(f"Allowed origins: {ALLOWED_ORIGINS}")
     app.run(debug=True)
