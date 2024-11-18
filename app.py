@@ -37,9 +37,7 @@ def index():
     response = make_response(html)
     response.headers['Content-Type'] = 'text/html'
     
-    # Set CORS headers
-    # response.headers['Access-Control-Allow-Origin'] = 'http://localhost:3000'
-    response.headers['Access-Control-Allow-Credentials'] = 'true'
+    # response.headers['Access-Control-Allow-Credentials'] = 'true'
     return response
 
 
